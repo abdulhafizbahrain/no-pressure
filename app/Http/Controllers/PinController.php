@@ -4,83 +4,105 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorepinRequest;
 use App\Http\Requests\UpdatepinRequest;
+use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Pin;
+use Inertia\Inertia;
 
 class PinController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function home()
     {
-        //
+        return Inertia::render('Home', [
+            'canLogin' => Route::has('login'),
+            'canRegister' => Route::has('register'),
+            'laravelVersion' => Application::VERSION,
+            'phpVersion' => PHP_VERSION,
+            'pins' => Pin::all()->map( function ($pin) {
+                return [
+                    'title' => $pin->title,
+                    'description' => $pin->description,
+                    'user_name' => $pin->User->name
+                ];
+            })
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+    public function pins()
+    {   
+        return Inertia::render('Pins', [
+            'pins' => Pin::where('user_id', Auth::user()->id)->get()->map(function($pin){
+                return [
+                    'id' => $pin->id,
+                    'title' => $pin->title,
+                    'description' => $pin->description,
+                    'user_name' => $pin->User->name,
+                    'created_at' => $pin->created_at,
+                    'updated_at' => $pin->updated_at
+                ];
+            })
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StorepinRequest  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(StorepinRequest $request)
     {
-        //
+        Pin::create([
+            'user_id' => Auth::user()->id,
+            'title' => $request->pinTitle,
+            'description' => $request->pinDescription,
+        ]);
+
+        
+        return to_route('pins');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Pin  $Pin
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Pin $Pin)
+    public function show(StorepinRequest $request)
     {
-        //
+        return Inertia::render('Pins/Show', [
+            'pin' => Pin::where('user_id', Auth::user()->id)->where('id', $request->id)->get()->map(function($pin){
+                return [
+                    'id' => $pin->id,
+                    'title' => $pin->title,
+                    'description' => $pin->description,
+                    'user_name' => $pin->User->name,
+                    'created_at' => date($pin->created_at),
+                    'updated_at' => date($pin->updated_at)
+                ];
+            })
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Pin  $Pin
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Pin $Pin)
+    public function edit(StorepinRequest $request)
     {
-        //
+        return Inertia::render('Pins/Edit', [
+            'pin' => Pin::where('user_id', Auth::user()->id)->where('id', $request->id)->get()->map(function($pin){
+                return [
+                    'id' => $pin->id,
+                    'title' => $pin->title,
+                    'description' => $pin->description,
+                    'user_name' => $pin->User->name,
+                    'created_at' => date($pin->created_at),
+                    'updated_at' => date($pin->updated_at)
+                ];
+            })
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdatepinRequest  $request
-     * @param  \App\Models\Pin  $Pin
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdatepinRequest $request, Pin $Pin)
+    public function update(UpdatepinRequest $request)
     {
-        //
+        Pin::where('id', $request->pinId)->update([
+            'title' => $request->pinTitle,
+            'description' => $request->pinDescription,
+            'updated_at' => now(),
+        ]);
+
+        return to_route('pins');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Pin  $Pin
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Pin $Pin)
+    public function destroy(StorepinRequest $request)
     {
-        //
+        Pin::where('id', $request->id)->delete();
+        return to_route('pins');
     }
 }

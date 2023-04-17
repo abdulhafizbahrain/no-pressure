@@ -8,56 +8,56 @@
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <h1 class="text-xl">Create your pins</h1>
+                <h1 class="text-xl">Edit your pins</h1>
                 <div class="">
                     <!-- Insert Code here -->
                     <form @submit.prevent="submit">
+                        <Input id="pinId" :value="form.pinId = pin[0].id" type="hidden" />
                         <div class="mt-2">
                             <InputLabel for="pinTitle" value="Title" />
-                            <TextInput id="pinTitle" v-model="form.pinTitle" type="text" class="mt-1 block w-full" required
-                                autofocus />
+                            <TextInput id="pinTitle" v-model="form.pinTitle" type="text" class="mt-1 block w-full"
+                                required />
                             <InputError class="mt-2" :message="form.errors.text" />
                         </div>
 
                         <div class="mt-2">
                             <InputLabel for="pinDescription" value="Description" />
-                            <textarea id="pinDescription" rows="4"
+                            <textarea id="pinDescription" v-model="form.pinDescription" rows="4"
                                 class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm w-full mt-1"
-                                placeholder="Describe your pin" v-model="form.pinDescription" required></textarea>
+                                placeholder="Describe your pin" required></textarea>
                             <InputError class="mt-2" :message="form.errors.textarea" />
                         </div>
 
+                        <div class="mt-2">
+                            <InputLabel for="pinUser" value="User" />
+                            <TextInput id="pinUser" v-model="form.pinUser" type="text" class="mt-1 bg-gray-100 block w-full"
+                                disabled :value="pin[0].user_name" />
+                            <InputError class="mt-2" :message="form.errors.text" />
+                        </div>
 
+                        <div class="mt-2">
+                            <InputLabel for="pinCreatedAt" value="Created At" />
+                            <TextInput id="pinCreatedAt" v-model="form.pinCreateAt" type="text"
+                                class="mt-1 bg-gray-100 block w-full" disabled :value="pin[0].created_at" />
+                            <InputError class="mt-2" :message="form.errors.text" />
+                        </div>
+
+                        <div class="mt-2">
+                            <InputLabel for="pinUpdatedAt" value="Updated At" />
+                            <TextInput id="pinUpdatedAt" v-model="form.pinCreateAt" type="text"
+                                class="mt-1 bg-gray-100 block w-full" disabled :value="pin[0].updated_at" />
+                            <InputError class="mt-2" :message="form.errors.text" />
+                        </div>
                         <div class="flex items-center justify-end mt-4">
+                            <PrimaryButton class="ml-4">
+                                <Link :href="route('pin.destroy')" method="post" :data="{ id: pin.id }">Delete</Link>
+                            </PrimaryButton>
                             <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }"
                                 :disabled="form.processing">
-                                Add Pin
+                                Update
                             </PrimaryButton>
                         </div>
                     </form>
-
-
-                    <div class="flex w-full container mx-auto flex-col py-10 gap-10">
-                        <h1 class="text-3xl">Pins</h1>
-
-                        <div v-for="pin in pins" :key="pin.id" class="bg-white px-5 py-2 rounded-md">
-                            <h1 class="pb-5">by: <span class="font-semibold text-indigo-600">{{ pin.user_name }}</span></h1>
-                            <h1 class="text-xl font-bold">{{ pin.title }}</h1>
-                            <p>{{ pin.description }}</p>
-                            <div class="flex items-center justify-end my-3">
-                                <PrimaryButton class="ml-4">
-                                    <Link :href="route('pin.destroy')" method="post" :data="{ id: pin.id }">Delete</Link>
-                                </PrimaryButton>
-                                <PrimaryButton class="ml-4">
-                                    <Link :href="route('pin.edit')" method="get" :data="{ id: pin.id }">Edit</Link>
-                                </PrimaryButton>
-                                <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }"
-                                    :disabled="form.processing">
-                                    <Link :href="route('pin.show')" method="get" :data="{ id: pin.id }">Detail</Link>
-                                </PrimaryButton>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -79,7 +79,7 @@ defineProps({
     canRegister: Boolean,
     laravelVersion: String,
     phpVersion: String,
-    pins: {
+    pin: {
         Type: Object,
         default: () => { }
     },
@@ -90,14 +90,13 @@ defineProps({
 });
 
 const form = useForm({
+    pinId: '',
     pinTitle: '',
     pinDescription: '',
 });
 
 const submit = () => {
-    form.post(route('pin.store'), {
-        onFinish: () => form.reset('pinTitle', 'pinDescription'),
-    });
+    form.post(route('pin.update'));
 };
 </script>
 
