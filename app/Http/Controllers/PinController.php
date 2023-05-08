@@ -91,13 +91,32 @@ class PinController extends Controller
 
     public function update(UpdatepinRequest $request)
     {
+        $title = '';
+        $description = '';
+
+        $pins = Pin::where('user_id', Auth::user()->id)->where('id', $request->pinId)->get();
+
+        if($request->pinTitle == '') {
+            $title = $pins[0]['title'];
+        } else { 
+            $title = $request->pinTitle;
+        }
+
+        if($request->pinDescription == '') {
+            $description = $pins[0]['description'];
+        } else { 
+            $description = $request->pinDescription;
+        }
+
+
         Pin::where('id', $request->pinId)->update([
-            'title' => $request->pinTitle,
-            'description' => $request->pinDescription,
+            'title' => $title,
+            'description' => $description,
             'updated_at' => now(),
         ]);
 
-        return to_route('pins');
+        
+
     }
 
     public function destroy(StorepinRequest $request)
