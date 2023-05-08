@@ -14,8 +14,8 @@
                     <form @submit.prevent="submit">
                         <div class="mt-2">
                             <InputLabel for="pinTitle" value="Title" />
-                            <TextInput id="pinTitle" v-model="form.pinTitle" type="text" class="mt-1 block w-full" required
-                                autofocus />
+                            <TextInput id="pinTitle" v-model="form.pinTitle" type="text" class="mt-1 block w-full"
+                                placeholder="Pin Title" required autofocus />
                             <InputError class="mt-2" :message="form.errors.text" />
                         </div>
 
@@ -45,16 +45,20 @@
                             <h1 class="text-xl font-bold">{{ pin.title }}</h1>
                             <p>{{ pin.description }}</p>
                             <div class="flex items-center justify-end my-3">
-                                <PrimaryButton class="ml-4">
-                                    <Link :href="route('pin.destroy')" method="post" :data="{ id: pin.id }">Delete</Link>
-                                </PrimaryButton>
-                                <PrimaryButton class="ml-4">
-                                    <Link :href="route('pin.edit')" method="get" :data="{ id: pin.id }">Edit</Link>
-                                </PrimaryButton>
+                                <Link :href="route('pin.destroy')" method="post" :data="{ id: pin.id }">
                                 <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }"
-                                    :disabled="form.processing">
-                                    <Link :href="route('pin.show')" method="get" :data="{ id: pin.id }">Detail</Link>
-                                </PrimaryButton>
+                                    :disabled="form.processing">Delete</PrimaryButton>
+                                </Link>
+                                <Link :href="route('pin.edit')" method="get" :data="{ id: pin.id }">
+                                <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }"
+                                    :disabled="form.processing">Edit</PrimaryButton>
+                                </Link>
+
+                                <Link :href="route('pin.show')" method="get" :data="{ id: pin.id }">
+                                <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }"
+                                    :disabled="form.processing">Detail</PrimaryButton>
+                                </Link>
+
                             </div>
                         </div>
                     </div>
@@ -94,10 +98,20 @@ const form = useForm({
     pinDescription: '',
 });
 
-const submit = () => {
-    form.post(route('pin.store'), {
-        onFinish: () => form.reset('pinTitle', 'pinDescription'),
-    });
+function clearForm() {
+    document.getElementById('pinTitle').value = "";
+    document.getElementById('pinDescription').value = "";
 };
+
+const submit = () => {
+    // form.post(route('pin.store'), {
+    //     onFinish: () => { form.reset('pinTitle', 'pinDescription'), clearForm() }
+    // });
+
+    console.log(form.pinTitle);
+    console.log(form.pinDescription);
+
+};
+
 </script>
 

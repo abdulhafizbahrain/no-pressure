@@ -15,8 +15,8 @@
                         <Input id="pinId" :value="form.pinId = pin[0].id" type="hidden" />
                         <div class="mt-2">
                             <InputLabel for="pinTitle" value="Title" />
-                            <TextInput id="pinTitle" v-model="form.pinTitle" type="text" class="mt-1 block w-full"
-                                required />
+                            <TextInput id="pinTitle" v-model.value="pin[0].title" v-model="form.pinTitle" type="text"
+                                class="mt-1 block w-full" placeholder="Pin Title" required />
                             <InputError class="mt-2" :message="form.errors.text" />
                         </div>
 
@@ -24,7 +24,7 @@
                             <InputLabel for="pinDescription" value="Description" />
                             <textarea id="pinDescription" v-model="form.pinDescription" rows="4"
                                 class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm w-full mt-1"
-                                placeholder="Describe your pin" required></textarea>
+                                placeholder="Describe your pin" v-model.text="pin[0].description" required></textarea>
                             <InputError class="mt-2" :message="form.errors.textarea" />
                         </div>
 
@@ -49,9 +49,12 @@
                             <InputError class="mt-2" :message="form.errors.text" />
                         </div>
                         <div class="flex items-center justify-end mt-4">
-                            <PrimaryButton class="ml-4">
-                                <Link :href="route('pin.destroy')" method="post" :data="{ id: pin.id }">Delete</Link>
-                            </PrimaryButton>
+
+                            <Link :href="route('pins')">
+                            <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }"
+                                :disabled="form.processing">Cancel</PrimaryButton>
+                            </Link>
+
                             <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }"
                                 :disabled="form.processing">
                                 Update
@@ -75,10 +78,6 @@ import TextInput from '@/Components/TextInput.vue';
 
 
 defineProps({
-    canLogin: Boolean,
-    canRegister: Boolean,
-    laravelVersion: String,
-    phpVersion: String,
     pin: {
         Type: Object,
         default: () => { }
@@ -95,7 +94,11 @@ const form = useForm({
     pinDescription: '',
 });
 
+
 const submit = () => {
+    console.log(form.pinId);
+    console.log(form.pinTitle);
+    console.log(form.pinDescription);
     form.post(route('pin.update'));
 };
 </script>
