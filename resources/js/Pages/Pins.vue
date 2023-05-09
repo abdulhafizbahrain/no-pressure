@@ -104,13 +104,9 @@ function clearForm() {
 };
 
 const submit = () => {
-    // form.post(route('pin.store'), {
-    //     onFinish: () => { form.reset('pinTitle', 'pinDescription'), clearForm() }
-    // });
-
-    console.log(form.pinTitle);
-    console.log(form.pinDescription);
-
+    form.post(route('pin.store'), {
+        onFinish: () => { form.reset('pinTitle', 'pinDescription'), clearForm() }
+    });
 };
 
 </script>

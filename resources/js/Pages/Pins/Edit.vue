@@ -96,9 +96,6 @@ const form = useForm({
 
 
 const submit = () => {
-    console.log(form.pinId);
-    console.log(form.pinTitle);
-    console.log(form.pinDescription);
     form.post(route('pin.update'));
 };
 </script>
